@@ -2,3 +2,5 @@
 *.uvoptx
 *.uvguix
 *.uvguix.*
+*/MDK-ARM/balance bicycle
+*.lst
