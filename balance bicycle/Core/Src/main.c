@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
+#include "SERVO.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,6 +100,7 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   OLED_Init();
+  Servo_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
