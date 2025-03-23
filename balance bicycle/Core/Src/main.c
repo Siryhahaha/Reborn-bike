@@ -59,6 +59,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint8_t rx_data;
 
 /* USER CODE END 0 */
 
@@ -79,7 +80,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_2);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -101,6 +102,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   OLED_Init();
   Servo_Init();
+  
+  HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+
+  OLED_ShowNum(1,1,1,1);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -108,11 +115,35 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    OLED_ShowNum(2, 1, rx_data, 1);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
+
+/*
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
+蓝牙中断控制函数
+*/
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
+{
+  if (huart -> Instance == USART2)
+  {
+    if (rx_data == '0')
+    {
+      OLED_Clear();
+    }
+    else if (rx_data == '1')
+    {
+      OLED_ShowString(3,1,"hahaha");
+    }
+    HAL_UART_Transmit_IT(&huart2, &rx_data, 1);
+
+    HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+  }
+}
+
 
 /**
   * @brief System Clock Configuration

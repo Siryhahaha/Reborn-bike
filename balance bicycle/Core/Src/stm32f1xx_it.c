@@ -20,8 +20,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+extern UART_HandleTypeDef huart2;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -213,5 +215,8 @@ void EXTI9_5_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+void USART2_IRQHandler(void) 
+{
+  HAL_UART_IRQHandler(&huart2);
+}
 /* USER CODE END 1 */
