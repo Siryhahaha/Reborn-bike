@@ -9,6 +9,50 @@
 
 柏杰硬件，孙艺通信等库，润一控制和主函数 
 
+## 定义
+
+#### 电机
+
+pwm pa9 TIM1
+
+#### mpu6050
+
+scl pb6
+sda pb7
+int pb5
+
+#### oled
+
+scl pb10
+sda pb11
+
+#### 动量轮
+
+编码器a相 pa6 TIM3
+b相 pa7
+正反转 pb9
+pwm pa8
+使能 pb8
+
+#### tb6612
+
+pwm pa9
+ain1 pa5
+ain2 pa4
+
+#### 舵机
+
+pwm pa0 TIM2
+
+#### adc
+
+pa1
+
+#### 蓝牙串口
+
+rx pa3
+tx pa2
+
 
 
 ## 文件
