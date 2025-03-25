@@ -1,4 +1,5 @@
 #ifndef __OLED_FONT_H__
+#define __OLED_FONT_H__
 
 const unsigned char F8x16t[][16]=
 {

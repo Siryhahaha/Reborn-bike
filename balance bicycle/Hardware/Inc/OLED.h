@@ -1,4 +1,5 @@
 #ifndef __OLED_H__
+#define __OLED_H__
 
 #define OLED_ADDRESSS  0x78
 

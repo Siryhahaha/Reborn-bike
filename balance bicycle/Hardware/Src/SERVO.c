@@ -1,12 +1,11 @@
-#include <stdio.h>
 #include "stm32f1xx_hal.h"
 #include "tim.h"
 #include "SERVO.h"
 
 void Servo_Init(void)
 {
-	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500); // 设置占空比（1500/20000 = 7.5%）
+	HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 }
 
 float Servo_GetAngle(void)

@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
 #include "SERVO.h"
+#include "MOTOR.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,7 +81,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_2);
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -102,12 +103,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   OLED_Init();
   Servo_Init();
+  MOTOR_Init();
   
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
 
   OLED_ShowNum(1,1,1,1);
-
-
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,6 +117,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
     OLED_ShowNum(2, 1, rx_data, 1);
+    HAL_Delay(200);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
