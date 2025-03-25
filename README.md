@@ -4,6 +4,7 @@
 1. PID算法重写
 2. 传感器代码重制
 3. 工程结构优化
+4. 使用HAL库
 
 ## 分工
 
@@ -59,12 +60,9 @@ tx pa2
 
 README
 
-old：老的单车源码作为参考
-
-project：新的单车代码
-
-车架stl文件
-
+balance bicycle 代码工程
+doc HAL手册
+hardware 硬件相关文件
 
 
 ## 会议记录250315
