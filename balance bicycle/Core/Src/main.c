@@ -119,7 +119,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    OLED_ShowNum(1, 1, Encoder_Get(),7);
+    OLED_ShowSignNum(1, 1, Encoder_Get(),7);
     HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
