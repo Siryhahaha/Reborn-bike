@@ -29,6 +29,8 @@
 #include "OLED.h"
 #include "SERVO.h"
 #include "MOTOR.h"
+#include "WHEEL.h"
+#include "ENCODER.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -105,9 +107,10 @@ int main(void)
   Servo_Init();
   MOTOR_Init();
   
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
 
-  OLED_ShowNum(1,1,1,1);
   
   /* USER CODE END 2 */
 
@@ -116,8 +119,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    OLED_ShowNum(2, 1, rx_data, 1);
-    HAL_Delay(200);
+    OLED_ShowNum(1, 1, Encoder_Get(),7);
+    HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
