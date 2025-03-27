@@ -4,28 +4,60 @@
 #include "tim.h"
 //还没测试的哈
 
-uint8_t Wheel_EN = 0;
+uint8_t Wheel_EN = 1;
 uint8_t Wheel_DIR = 0;
 
-int PWM_MAX = 10000;
-int PWM_MIN = -10000;
+int PWM_MAX = 7000;
+int PWM_MIN = -7000;
 
-extern int Roll;
+// extern int Roll;
+int Roll = 0;
 
-void Limit(int *PWM)
+void Wheel_Init(void)
 {
-	if(*PWM>PWM_MAX)*PWM=PWM_MAX;
-	if(*PWM<PWM_MIN)*PWM=PWM_MIN;
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 7200);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 }
 
-void Load(int PWM)
+int Wheel_Limit(int PWM)
 {
-	if(PWM>0)   Wheel_EN=1,Wheel_DIR=1;
-	else        Wheel_EN=1,Wheel_DIR=0;
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, abs(PWM));
+	if(PWM > PWM_MAX)
+	{
+		return PWM_MAX;
+	}
+	else if(PWM < PWM_MIN)
+	{
+		return PWM_MIN;
+	}
+	return PWM;
 }
 
-void Stop_Detect(void)
+void Wheel_Load(int PWM)
+{
+	PWM = Wheel_Limit(PWM);
+	if (Wheel_EN == 1)
+	{
+		if(PWM>0)
+		{
+			Wheel_DIR=1;
+		}
+		else
+		{
+			Wheel_DIR=0;
+		}       
+		int compare = 7200 - 1 - abs(PWM);
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, compare);
+		// __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, abs(PWM));
+		//此处是channel2也就是pa9就可以
+	}
+	else if (Wheel_EN == 0)
+	{
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+	}
+
+}
+
+void Wheel_Stop_Detect(void)
 {   
 	if(abs(Roll - 0)>12)
     {

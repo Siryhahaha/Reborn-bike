@@ -5,9 +5,9 @@
 extern uint8_t Wheel_EN;
 extern uint8_t Wheel_DIR;
  
-
-void Limit(int *PWM);
-void Load(int PWM);
-void Stop_Detect(void);
+void Wheel_Init(void);
+int Wheel_Limit(int PWM);
+void Wheel_Load(int PWM);
+void Wheel_Stop_Detect(void);
 
 #endif

@@ -107,17 +107,18 @@ int main(void)
   OLED_Init();
   Servo_Init();
   MOTOR_Init();
+  Wheel_Init();
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  int ret;
-  do
-  {
-    ret = MPU6050_DMP_Init();
-    HAL_Delay(1000);
-  } while (ret);
+
+  // int ret;
+  // do
+  // {
+  //   ret = MPU6050_DMP_Init();
+  //   HAL_Delay(1000);
+  // } while (ret);
 
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
 
-  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -125,13 +126,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    OLED_ShowSignNum(1, 1, Encoder_Get(),7);
-    if (MPU6050_DMP_Get_Date(&pitch, &roll, &yaw) == 0)
-    {
-      OLED_ShowFloat(2, 1, pitch);
-      OLED_ShowFloat(3, 1, roll);
-      OLED_ShowFloat(4, 1, yaw);
-    }
+
+    OLED_ShowSignNum(1, 1, Encoder_Get(), 6);
+    OLED_ShowSignNum(2, 1, __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_1),6);
+    // if (MPU6050_DMP_Get_Date(&pitch, &roll, &yaw) == 0)
+    // {
+    //   OLED_ShowFloat(2, 1, pitch);
+    //   OLED_ShowFloat(3, 1, roll);
+    //   OLED_ShowFloat(4, 1, yaw);
+    // }
     HAL_Delay(200);
     /* USER CODE BEGIN 3 */
   }
