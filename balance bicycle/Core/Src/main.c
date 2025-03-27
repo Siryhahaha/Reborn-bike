@@ -29,6 +29,8 @@
 #include "OLED.h"
 #include "SERVO.h"
 #include "MOTOR.h"
+#include "WHEEL.h"
+#include "ENCODER.h"
 #include "MPU6050.h"
 /* USER CODE END Includes */
 
@@ -105,6 +107,7 @@ int main(void)
   OLED_Init();
   Servo_Init();
   MOTOR_Init();
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   int ret;
   do
   {
@@ -114,7 +117,6 @@ int main(void)
 
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
 
-  OLED_ShowNum(1,1,1,1);
   
   /* USER CODE END 2 */
 
@@ -123,7 +125,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    OLED_ShowNum(1, 1, rx_data, 1);
+    OLED_ShowSignNum(1, 1, Encoder_Get(),7);
     if (MPU6050_DMP_Get_Date(&pitch, &roll, &yaw) == 0)
     {
       OLED_ShowFloat(2, 1, pitch);

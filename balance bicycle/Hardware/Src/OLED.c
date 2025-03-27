@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "stdlib.h"
 #include "stm32f1xx_hal.h"
 #include "i2c.h"
 #include "OLED.h"
@@ -120,4 +121,16 @@ void OLED_ShowNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length)
 	{
 		OLED_ShowChar(Line, Column + i, Number / OLED_Pow(10, Length - i - 1) % 10 + '0');
 	}
+}
+
+void OLED_ShowSignNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Length)
+{
+    char Sign = '+';
+    if (Number < 0)
+    {
+        Sign = '-';
+        Number = abs(Number);
+    }
+    OLED_ShowChar(Line, Column, Sign);
+    OLED_ShowNum(Line, Column + 1, Number, Length - 1);
 }
