@@ -2759,7 +2759,7 @@ int mpu_run_self_test(long *gyro, long *accel)
     if (!compass_result)
         result |= 0x04;
 #else
-        result |= 0x04;
+        // result |= 0x04;
 #endif
 restore:
 #elif defined MPU6500

@@ -29,6 +29,7 @@
 #include "OLED.h"
 #include "SERVO.h"
 #include "MOTOR.h"
+#include "MPU6050.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,7 +50,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+float pitch, roll, yaw;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,7 +105,13 @@ int main(void)
   OLED_Init();
   Servo_Init();
   MOTOR_Init();
-  
+  int ret;
+  do
+  {
+    ret = MPU6050_DMP_Init();
+    HAL_Delay(1000);
+  } while (ret);
+
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
 
   OLED_ShowNum(1,1,1,1);
@@ -116,7 +123,13 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    OLED_ShowNum(2, 1, rx_data, 1);
+    OLED_ShowNum(1, 1, rx_data, 1);
+    if (MPU6050_DMP_Get_Date(&pitch, &roll, &yaw) == 0)
+    {
+      OLED_ShowFloat(2, 1, pitch);
+      OLED_ShowFloat(3, 1, roll);
+      OLED_ShowFloat(4, 1, yaw);
+    }
     HAL_Delay(200);
     /* USER CODE BEGIN 3 */
   }
