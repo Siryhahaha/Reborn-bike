@@ -23,6 +23,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "DataProcess.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -127,15 +128,26 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-    OLED_ShowSignNum(1, 1, Encoder_Get(), 6);
-    OLED_ShowSignNum(2, 1, __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_1),6);
+    /*蓝牙代码*/
+    if(uart2_rx_flag) 
+  {
+      uart2_rx_flag = 0;  // 清除标志
+      ProcessUARTCommand(uart2_rx_buffer);  // 处理接收到的命令
+  }
+    /*以上是蓝牙代码*/
+
+    // OLED_ShowSignNum(1, 1, Encoder_Get(), 6);
+    // OLED_ShowSignNum(2, 1, __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_1),6);
+    // HAL_Delay(200);
+
+    /*以下是mpu6050代码*/
     // if (MPU6050_DMP_Get_Date(&pitch, &roll, &yaw) == 0)
     // {
     //   OLED_ShowFloat(2, 1, pitch);
     //   OLED_ShowFloat(3, 1, roll);
     //   OLED_ShowFloat(4, 1, yaw);
     // }
-    HAL_Delay(200);
+    /*以上是mpu6050代码*/
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -143,22 +155,50 @@ int main(void)
 
 /*
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
-蓝牙中断控制函数
+蓝牙中断接收函数
 */
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
 {
-  if (huart -> Instance == USART2)
+  static uint8_t tmp_data;  //临时存储
+  
+  if (huart->Instance == USART2) 
   {
-    if (rx_data == '0')
+    tmp_data = rx_data;  //获取数据
+    
+    switch(uart2_rx_state) 
     {
-      OLED_Clear();
+      case 0:
+        if(tmp_data == '@') 
+        {
+          uart2_rx_state = 1;
+          uart2_rx_length = 0;
+          uart2_rx_flag = 0;
+        }
+        break;
+        
+      case 1:  //接收数据体
+        if(tmp_data == '\r') 
+        {
+          uart2_rx_state = 2;
+        } 
+        else 
+        {
+          if(uart2_rx_length < RX_BUFFER_SIZE-1) 
+          { 
+            uart2_rx_buffer[uart2_rx_length++] = tmp_data;
+          }
+        }
+        break;
+        
+      case 2:
+        if(tmp_data == '\n') 
+        {
+          uart2_rx_buffer[uart2_rx_length] = '\0';
+          uart2_rx_flag = 1;
+        }
+        uart2_rx_state = 0;  //重置
     }
-    else if (rx_data == '1')
-    {
-      OLED_ShowString(3,1,"hahaha");
-    }
-    HAL_UART_Transmit_IT(&huart2, &rx_data, 1);
 
     HAL_UART_Receive_IT(&huart2, &rx_data, 1);
   }

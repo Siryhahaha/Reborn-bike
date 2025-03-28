@@ -575,6 +575,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\Src\MPU6050.c</FilePath>
             </File>
+            <File>
+              <FileName>DataProcess.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\DataProcess.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
