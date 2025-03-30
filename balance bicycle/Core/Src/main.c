@@ -23,7 +23,6 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "DataProcess.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -33,6 +32,9 @@
 #include "WHEEL.h"
 #include "ENCODER.h"
 #include "MPU6050.h"
+#include "DataProcess.h"
+#include "PID.h"
+#include "vofa.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +55,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+uint8_t mode = 0;
+uint8_t rx_data;
 float pitch, roll, yaw;
+short gyro[3], accel[3];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,7 +70,69 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t rx_data;
+
+//蓝牙中断接收函数
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
+{
+  static uint8_t tmp_data;  //临时存储
+  
+  if (huart->Instance == USART2) 
+  {
+    tmp_data = rx_data;  //获取数据
+    
+    switch(uart2_rx_state) 
+    {
+      case 0:
+        if(tmp_data == '@') 
+        {
+          uart2_rx_state = 1;
+          uart2_rx_length = 0;
+          uart2_rx_flag = 0;
+        }
+        break;
+        
+      case 1:  //接收数据体
+        if(tmp_data == '\r') 
+        {
+          uart2_rx_state = 2;
+        } 
+        else 
+        {
+          if(uart2_rx_length < RX_BUFFER_SIZE-1) 
+          { 
+            uart2_rx_buffer[uart2_rx_length++] = tmp_data;
+          }
+        }
+        break;
+        
+      case 2:
+        if(tmp_data == '\n') 
+        {
+          uart2_rx_buffer[uart2_rx_length] = '\0';
+          uart2_rx_flag = 1;
+        }
+        uart2_rx_state = 0;  //重置
+        break;
+    }
+
+    HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+  }
+}
+
+//MPU6050外部中断回调
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == MPU6050_EXTI_Pin)
+  {
+    int vertical_out = Vertical(roll, gyro[0]),
+        velocity_out = Velocity(Encoder_Get());
+    
+    int Out = vertical_out + velocity_out;
+    Wheel_Load(Out);
+
+    VOFA_Transmit(roll);
+  }
+}
 
 /* USER CODE END 0 */
 
@@ -109,17 +177,13 @@ int main(void)
   Servo_Init();
   MOTOR_Init();
   Wheel_Init();
-  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-
-  // int ret;
-  // do
-  // {
-  //   ret = MPU6050_DMP_Init();
-  //   HAL_Delay(1000);
-  // } while (ret);
-
+  int ret;
+  do
+  {
+    ret = MPU6050_DMP_Init();
+    HAL_Delay(1000);
+  } while (ret);
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -130,80 +194,26 @@ int main(void)
 
     /*蓝牙代码*/
     if(uart2_rx_flag) 
-  {
-      uart2_rx_flag = 0;  // 清除标志
-      ProcessUARTCommand(uart2_rx_buffer);  // 处理接收到的命令
-  }
+    {
+        uart2_rx_flag = 0;  // 清除标志
+        ProcessUARTCommand(uart2_rx_buffer);  // 处理接收到的命令
+    }
     /*以上是蓝牙代码*/
 
-    // OLED_ShowSignNum(1, 1, Encoder_Get(), 6);
-    // OLED_ShowSignNum(2, 1, __HAL_TIM_GET_COMPARE(&htim1, TIM_CHANNEL_1),6);
-    // HAL_Delay(200);
-
     /*以下是mpu6050代码*/
-    // if (MPU6050_DMP_Get_Date(&pitch, &roll, &yaw) == 0)
-    // {
-    //   OLED_ShowFloat(2, 1, pitch);
-    //   OLED_ShowFloat(3, 1, roll);
-    //   OLED_ShowFloat(4, 1, yaw);
-    // }
+    if (MPU6050_DMP_Get_Data(&pitch, &roll, &yaw) == 0)
+    {
+      OLED_ShowFloat(2, 1, pitch);
+      OLED_ShowFloat(3, 1, roll);
+      OLED_ShowFloat(4, 1, yaw);
+    }
+    MPU6050_Get_Gyroscope(gyro);
+    MPU6050_Get_Accelerometer(accel);
     /*以上是mpu6050代码*/
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
-
-/*
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
-蓝牙中断接收函数
-*/
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
-{
-  static uint8_t tmp_data;  //临时存储
-  
-  if (huart->Instance == USART2) 
-  {
-    tmp_data = rx_data;  //获取数据
-    
-    switch(uart2_rx_state) 
-    {
-      case 0:
-        if(tmp_data == '@') 
-        {
-          uart2_rx_state = 1;
-          uart2_rx_length = 0;
-          uart2_rx_flag = 0;
-        }
-        break;
-        
-      case 1:  //接收数据体
-        if(tmp_data == '\r') 
-        {
-          uart2_rx_state = 2;
-        } 
-        else 
-        {
-          if(uart2_rx_length < RX_BUFFER_SIZE-1) 
-          { 
-            uart2_rx_buffer[uart2_rx_length++] = tmp_data;
-          }
-        }
-        break;
-        
-      case 2:
-        if(tmp_data == '\n') 
-        {
-          uart2_rx_buffer[uart2_rx_length] = '\0';
-          uart2_rx_flag = 1;
-        }
-        uart2_rx_state = 0;  //重置
-    }
-
-    HAL_UART_Receive_IT(&huart2, &rx_data, 1);
-  }
-}
-
 
 /**
   * @brief System Clock Configuration

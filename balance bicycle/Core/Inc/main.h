@@ -94,7 +94,7 @@ void Error_Handler(void);
 #define WHEEL_DIR_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+extern uint8_t mode;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

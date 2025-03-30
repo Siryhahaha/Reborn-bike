@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <math.h>
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
@@ -190,7 +191,7 @@ int MPU6050_DMP_Init(void)
     return 0;
 }
 
-int MPU6050_DMP_Get_Date(float *pitch, float *roll, float *yaw)
+int MPU6050_DMP_Get_Data(float *pitch, float *roll, float *yaw)
 {
     float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;
     short gyro[3];
@@ -217,4 +218,20 @@ int MPU6050_DMP_Get_Date(float *pitch, float *roll, float *yaw)
     }
 
     return 0;
+}
+
+int MPU6050_Get_Gyroscope(short *gyro)
+{
+    if (mpu_get_gyro_reg(gyro, NULL) == 0)
+        return 0;
+    else
+        return -1;
+}
+
+int MPU6050_Get_Accelerometer(short *accel)
+{
+    if (mpu_get_accel_reg(accel, NULL) == 0)
+        return 0;
+    else
+        return -1;
 }

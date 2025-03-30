@@ -1,5 +1,4 @@
 #ifndef __DATAPROCESS_H__
-
 #define __DATAPROCESS_H__
 
 void ProcessUARTCommand(char* cmd);
