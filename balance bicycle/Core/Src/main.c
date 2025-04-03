@@ -184,6 +184,8 @@ int main(void)
     HAL_Delay(1000);
   } while (ret);
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+
+  OLED_ShowString(3, 1, "Power:  %%");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -201,12 +203,7 @@ int main(void)
     /*以上是蓝牙代码*/
 
     /*以下是mpu6050代码*/
-    if (MPU6050_DMP_Get_Data(&pitch, &roll, &yaw) == 0)
-    {
-      OLED_ShowFloat(2, 1, pitch);
-      OLED_ShowFloat(3, 1, roll);
-      OLED_ShowFloat(4, 1, yaw);
-    }
+    MPU6050_DMP_Get_Data(&pitch, &roll, &yaw);
     MPU6050_Get_Gyroscope(gyro);
     MPU6050_Get_Accelerometer(accel);
     /*以上是mpu6050代码*/
