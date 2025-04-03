@@ -5,13 +5,13 @@
 
 void MOTOR_Init(void)
 {
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 7200);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 }
 
 void MOTOR_SetDuty(float duty)
 {
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (1 - duty) * 7200);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, duty * 7200);
 }
 
 /**
