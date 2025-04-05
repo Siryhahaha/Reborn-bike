@@ -1,6 +1,6 @@
 #include "PID.h"
 
-float med_angle     = -3,
+float med_angle     = -1.892134,
       vertical_kp   = 500,
       vertical_kd   = 0,
       velocity_kp   = 0,
