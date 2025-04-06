@@ -144,7 +144,7 @@ float ADC_GetPower(ADC_HandleTypeDef *hadc, uint8_t times)
     HAL_Delay(5);
   }
   avg_value = (float)total_value / times;
-  return (avg_value / 4096 * 3.3 * 11.582 - 11.7) / (12.8 - 11.7) * 100;
+  return (avg_value / 4096 * 3.3 * 11.582 - 11.1) / (12.8 - 11.1) * 100;
 }
 
 /* USER CODE END 0 */
@@ -225,7 +225,7 @@ int main(void)
     MPU6050_Get_Accelerometer(accel);
     /*以上是mpu6050代码*/
 
-    if (abs(roll - med_angle) < 15)
+    if (abs(roll - med_angle) > 15)
     {
       Wheel_SetDir(0);
       wheel_en = 0;
