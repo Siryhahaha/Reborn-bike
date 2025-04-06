@@ -2,9 +2,9 @@
 
 float med_angle     = -2.9,
       vertical_kp   = 1250,
-      vertical_kd   = 3.9,
-      velocity_kp   = 4,
-      velocity_ki   = 0.02;
+      vertical_kd   = 3.6,
+      velocity_kp   = -2.4,
+      velocity_ki   = -0.012;
 
 int Vertical(float angle, float gyro)
 {
