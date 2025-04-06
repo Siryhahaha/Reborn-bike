@@ -7,21 +7,24 @@
 
 int PWM_MAX = 7000,
 	PWM_MIN = -7000;
+uint8_t wheel_en = 0;
 
 void Wheel_Init(void)
 {
 	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	wheel_en = 1;
 	HAL_GPIO_WritePin(WHEEL_EN_GPIO_Port, WHEEL_EN_Pin, GPIO_PIN_SET);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 }
 
 /**
- * @brief 动量轮的正反转与停止
+ * @brief 动量轮的正反转与停止 wheel_en为1时有效
  * @param Dir 正数为正转，负数为反转，零为停止
  */
 void Wheel_SetDir(int Dir)
 {
+	if (wheel_en == 0) return;
 	if (Dir > 0)
 	{
 		HAL_GPIO_WritePin(WHEEL_DIR_GPIO_Port, WHEEL_DIR_Pin, GPIO_PIN_RESET);

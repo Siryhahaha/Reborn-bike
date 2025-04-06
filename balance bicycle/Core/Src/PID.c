@@ -1,10 +1,10 @@
 #include "PID.h"
 
-float med_angle     = -1.892134,
-      vertical_kp   = 500,
-      vertical_kd   = 0,
-      velocity_kp   = 0,
-      velocity_ki   = 0;
+float med_angle     = -2.9,
+      vertical_kp   = 1250,
+      vertical_kd   = 3.9,
+      velocity_kp   = 4,
+      velocity_ki   = 0.02;
 
 int Vertical(float angle, float gyro)
 {
