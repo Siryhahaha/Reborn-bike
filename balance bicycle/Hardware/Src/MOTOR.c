@@ -3,6 +3,10 @@
 #include "main.h"
 #include "MOTOR.h"
 
+#define abs(x) 			(x > 0 ? x : -x)
+
+float motor_duty = 0;
+
 void MOTOR_Init(void)
 {
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
@@ -11,7 +15,17 @@ void MOTOR_Init(void)
 
 void MOTOR_SetDuty(float duty)
 {
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, duty * 7200);
+    motor_duty = duty;
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (1 - abs(duty)) * 7200);
+}
+
+void MOTOR_SpeedDelta(float d)
+{
+    motor_duty += d;
+    if (motor_duty > 1) motor_duty = 1;
+    else if (motor_duty < -1) motor_duty = -1;
+    MOTOR_SetDir(-motor_duty);
+    MOTOR_SetDuty(motor_duty);
 }
 
 /**

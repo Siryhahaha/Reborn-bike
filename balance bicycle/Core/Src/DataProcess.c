@@ -5,7 +5,11 @@
 #include "usart.h"
 #include "OLED.h"
 #include "PID.h"
+#include "SERVO.h"
+#include "MOTOR.h"
 #include "DataProcess.h"
+
+#define abs(x) 			(x > 0 ? x : -x)
 
 void SendResponse(const char* fmt, float val)
 {
@@ -65,6 +69,45 @@ void ProcessUARTCommand(char* cmd)
             if(sscanf(cmd + 4, "%f", &velocity_ki) == 1)
                 SendResponse("velocity_ki Set:", velocity_ki);
                 OLED_ShowFloat(4, 5, velocity_ki);
+        }
+    }
+    else if (mode == 0)
+    {
+        if(strncmp(cmd, "S", 1) == 0)
+        {
+            Servo_Set(0);
+            SendResponse("Angle:", Servo_GetAngle());
+        }
+        else if(strncmp(cmd, "L", 1) == 0)
+        {
+            Servo_TurnLeft();
+            SendResponse("Angle:", Servo_GetAngle());
+        } 
+        else if(strncmp(cmd, "R", 1) == 0)
+        {
+            Servo_TurnRight();
+            SendResponse("Angle:", Servo_GetAngle());
+        }
+        else if(strncmp(cmd, "V", 1) == 0)
+        {
+            Servo_Set(90);
+            SendResponse("Angle:", Servo_GetAngle());
+        }
+
+        else if(strncmp(cmd, "F", 1) == 0)
+        {
+            MOTOR_SpeedDelta(0.2);
+            SendResponse("Motor duty:", abs(motor_duty));
+        }
+        else if(strncmp(cmd, "B", 1) == 0)
+        {
+            MOTOR_SpeedDelta(-0.2);
+            SendResponse("Motor duty:", abs(motor_duty));
+        }
+        else if(strncmp(cmd, "Stop", 4) == 0)
+        {
+            MOTOR_SetDuty(0);
+            SendResponse("Motor speed:", 0);
         }
     }
 }
