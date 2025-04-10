@@ -1,10 +1,10 @@
 #include "PID.h"
 
 float med_angle     = -2.9,
-      vertical_kp   = 1250,
-      vertical_kd   = 3.6,
-      velocity_kp   = -2.4,
-      velocity_ki   = -0.012;
+      vertical_kp   = 1080,
+      vertical_kd   = 4.8,
+      velocity_kp   = -15,
+      velocity_ki   = -0.098;
 
 int Vertical(float angle, float gyro)
 {
@@ -17,7 +17,7 @@ int Velocity(int speed)
     static int last_low_out = 0,
                integral = 0;
 
-    int low_out = (1 - a) * speed + a * last_low_out;
+    int low_out = (1 - a) * speed + a * last_low_out;//低通滤波
 
     integral += low_out;
     if (integral > 10000)           integral = 10000;

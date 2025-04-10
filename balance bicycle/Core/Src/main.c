@@ -134,17 +134,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   }
 }
 
-float ADC_GetPower(ADC_HandleTypeDef *hadc, uint8_t times)
+float ADC_GetPower(ADC_HandleTypeDef *hadc)
 {
-  int total_value = 0;
-  float avg_value = 0;
-  for (uint8_t i = 0; i < times; ++i)
-  {
-    total_value += HAL_ADC_GetValue(hadc);
-    HAL_Delay(5);
-  }
-  avg_value = (float)total_value / times;
-  return (avg_value / 4096 * 3.3 * 11.582 - 11.1) / (12.8 - 11.1) * 100;
+  return ((float)HAL_ADC_GetValue(hadc) / 4096 * 3.3 * 11.582 - 11.1) / (12.8 - 11.1) * 100;
 }
 
 /* USER CODE END 0 */
@@ -199,6 +191,8 @@ int main(void)
   HAL_UART_Receive_IT(&huart2, &rx_data, 1);
   HAL_ADC_Start(&hadc1);
 
+  OLED_ShowString(1, 1, "SCUT  RFA");
+  OLED_ShowString(2, 1, "Yibai Team");
   OLED_ShowString(3, 1, "Power:     %");
   /* USER CODE END 2 */
 
@@ -209,7 +203,7 @@ int main(void)
     /* USER CODE END WHILE */
     if (mode == 0)
     {
-      OLED_ShowFloat(3, 7, ADC_GetPower(&hadc1, 5));
+      OLED_ShowFloat(3, 7, ADC_GetPower(&hadc1));
     }
     /*蓝牙代码*/
     if(uart2_rx_flag) 
