@@ -104,7 +104,7 @@ void ProcessUARTCommand(char* cmd)
             MOTOR_SpeedDelta(-0.2);
             SendResponse("Motor duty:", abs(motor_duty));
         }
-        else if(strncmp(cmd, "Stop", 4) == 0)
+        else if(strncmp(cmd, "stop", 4) == 0)
         {
             MOTOR_SetDuty(0);
             SendResponse("Motor speed:", 0);

@@ -130,7 +130,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     int Out = vertical_out + velocity_out;
     Wheel_Load(Out);
 
-    VOFA_Transmit(roll);
+    //VOFA_Transmit(roll);
   }
 }
 
